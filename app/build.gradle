@@ -1,0 +1,62 @@
+//打包插件配置，com.android.application是打包成apk文件。
+apply plugin: 'com.android.application'
+
+//apply plugin: 'com.android.library'  打包成aar文件
+
+android { //android打包配置
+    compileSdkVersion 28  //使用的编译工具版本号
+    buildToolsVersion "28.0.3"  //使用的编译工具版本名称
+
+    defaultConfig {
+        flavorDimensions "versionCode"
+
+        applicationId "io.appium.android.apis" //应用的唯一标示，adb uninstall需要使用这个id
+        minSdkVersion 17   //应用最小支持Android 版本
+        targetSdkVersion 28  //目标版本，手机会根据这个进行应用的向下兼容
+
+        versionCode 19   //应用版本编号
+        versionName '3.2.0' //应用的版本名称
+
+        testApplicationId "io.appium.android.apis.test"    //单元测试应用标示
+        testInstrumentationRunner ".app.LocalSampleInstrumentation"
+    }
+
+    dependencies {  //导入第三方代码
+//        implementation fileTree(dir: 'libs', include: ['*.jar']) //导入本地库，文件为libs目录下*.jar
+        implementation 'androidx.appcompat:appcompat:1.1.0' //导入第三方appcompat网络库，版本为1.0.2
+    }
+    /**  签名配置文件,后续安全部分会详细讲解
+    signingConfigs {
+        keyAlias '******'
+        keyPassword '******'
+        storeFile file('Key.jks')
+        keyPassword '******'
+    }
+    **/
+    buildTypes { //编译方式区分
+        release { //发布版本
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+
+        debug{   //调试版本
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors { //针对不同的发布渠道，打出不同的apk包，这样可以在应用中进行区分，便于统计渠道推广效果
+        wandoujia {
+            //豌豆荚渠道包配置
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]  //在资源文件中动态增加UMENG_CHANNEL_VALUE，值为wandoujia
+        }
+        xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]   //在资源文件中动态增加UMENG_CHANNEL_VALUE，值为xiaomi
+
+        }
+        _360 {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "_360"]
+        }
+        //...
+    }
+}
